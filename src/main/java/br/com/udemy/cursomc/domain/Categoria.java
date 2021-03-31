@@ -1,13 +1,17 @@
 package br.com.udemy.cursomc.domain;
 
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
 // Representa a entidade (tabela de um banco de dados por exemplo)
+@Entity
 public class Categoria implements Serializable { // Indica que os objetos dela podem ser convertidos em uma sequencia de bytes
 
     private static final long serialVersionUID = 1;
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String nome;
 
