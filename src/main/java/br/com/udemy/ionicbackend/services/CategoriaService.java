@@ -14,14 +14,19 @@ public class CategoriaService {
     @Autowired // Instancia o objeto (Spring)
     private CategoriaRepository categoriaRepository; // Dependencia (injeção do spring)
 
-    public Categoria buscar(Integer id) {
+    public Categoria find(Integer id) {
         Optional<Categoria> categoria = categoriaRepository.findById(id); // busca a categoria pelo id
         return categoria.orElseThrow(
                 () -> new ObjectNotFoundException("Objeto não encontrado! Id: " + id + ", Tipo: " + Categoria.class.getName()));
     }
 
-    public Categoria inserir(Categoria categoria) {
+    public Categoria insert(Categoria categoria) {
         categoria.setId(null);
+        return categoriaRepository.save(categoria);
+    }
+
+    public Categoria update(Categoria categoria) {
+        find(categoria.getId());
         return categoriaRepository.save(categoria);
     }
 
