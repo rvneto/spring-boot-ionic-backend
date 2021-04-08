@@ -4,10 +4,10 @@ import br.com.udemy.ionicbackend.domain.Categoria;
 import br.com.udemy.ionicbackend.services.CategoriaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController // Indica que a classe é um controladore REST
 @RequestMapping(value = "/categorias") // Indica que responde por esse endpoint
@@ -20,6 +20,14 @@ public class CategoriaResource {
     public ResponseEntity<?> find(@PathVariable Integer id) {
         Categoria categoria = categoriaService.buscar(id);
         return ResponseEntity.ok().body(categoria);
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    public ResponseEntity<Void> insert(@RequestBody Categoria categoria) { // json converte em java automaticamente
+        categoria = categoriaService.inserir(categoria);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest() // monta a URI de acordo com o que gravou
+                .path("/{id}").buildAndExpand(categoria.getId()).toUri();
+        return ResponseEntity.created(uri).build();
     }
 
 }
