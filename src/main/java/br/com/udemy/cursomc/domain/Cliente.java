@@ -1,8 +1,7 @@
 package br.com.udemy.cursomc.domain;
 
 import br.com.udemy.cursomc.domain.enums.TipoCliente;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -25,11 +24,10 @@ public class Cliente implements Serializable {
 
     private Integer tipoCliente;
 
-    @JsonManagedReference // Pode serializar
     @OneToMany(mappedBy = "cliente")
     private List<Endereco> enderecos = new ArrayList<>();
 
-    @JsonBackReference // Não pode serializar
+    @JsonIgnore
     @OneToMany(mappedBy = "cliente")
     private List<Pedido> pedidos = new ArrayList<>();
 
