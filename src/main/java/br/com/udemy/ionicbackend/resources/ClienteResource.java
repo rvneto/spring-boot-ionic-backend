@@ -1,14 +1,19 @@
 package br.com.udemy.ionicbackend.resources;
 
 import br.com.udemy.ionicbackend.domain.Cliente;
+import br.com.udemy.ionicbackend.domain.Cliente;
 import br.com.udemy.ionicbackend.dto.ClienteDTO;
+import br.com.udemy.ionicbackend.dto.ClienteDTO;
+import br.com.udemy.ionicbackend.dto.ClienteNewDTO;
 import br.com.udemy.ionicbackend.services.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +28,15 @@ public class ClienteResource {
     public ResponseEntity<Cliente> find(@PathVariable Integer id) {
         Cliente cliente = clienteService.find(id);
         return ResponseEntity.ok().body(cliente);
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    public ResponseEntity<Void> insert(@Valid @RequestBody ClienteNewDTO clienteNewDTO) {
+        Cliente cliente = clienteService.fromDTO(clienteNewDTO);
+        cliente = clienteService.insert(cliente);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}").buildAndExpand(cliente.getId()).toUri();
+        return ResponseEntity.created(uri).build();
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
@@ -44,7 +58,6 @@ public class ClienteResource {
         List<Cliente> clientes = clienteService.findAll();
         List<ClienteDTO> clientesDTO = clientes.stream().map(
                 ClienteDTO::new).collect(Collectors.toList());
-        // cliente -> new ClienteDTO(cliente)).collect(Collectors.toList());
         return ResponseEntity.ok().body(clientesDTO);
     }
 
@@ -56,7 +69,6 @@ public class ClienteResource {
             @RequestParam(name = "direction", defaultValue = "ASC") String direction) {
         Page<Cliente> clientes = clienteService.findPage(page, linesPerPage, orderBy, direction);
         Page<ClienteDTO> clientesDTO = clientes.map(ClienteDTO::new);
-        // cliente -> new ClienteDTO(cliente));
         return ResponseEntity.ok().body(clientesDTO);
     }
 

@@ -1,9 +1,13 @@
 package br.com.udemy.ionicbackend.services;
 
+import br.com.udemy.ionicbackend.domain.Cidade;
 import br.com.udemy.ionicbackend.domain.Cliente;
-import br.com.udemy.ionicbackend.domain.Cliente;
+import br.com.udemy.ionicbackend.domain.Endereco;
+import br.com.udemy.ionicbackend.domain.enums.TipoCliente;
 import br.com.udemy.ionicbackend.dto.ClienteDTO;
+import br.com.udemy.ionicbackend.dto.ClienteNewDTO;
 import br.com.udemy.ionicbackend.repositories.ClienteRepository;
+import br.com.udemy.ionicbackend.repositories.EnderecoRepository;
 import br.com.udemy.ionicbackend.services.exceptions.DataIntegrityException;
 import br.com.udemy.ionicbackend.services.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +26,20 @@ public class ClienteService {
     @Autowired
     private ClienteRepository clienteRepository;
 
+    @Autowired
+    private EnderecoRepository enderecoRepository;
+
     public Cliente find(Integer id) {
         Optional<Cliente> cliente = clienteRepository.findById(id); // busca a cliente pelo id
         return cliente.orElseThrow(
                 () -> new ObjectNotFoundException("Objeto não encontrado! Id: " + id + ", Tipo: " + Cliente.class.getName()));
+    }
+
+    public Cliente insert(Cliente cliente) {
+        cliente.setId(null);
+        cliente = clienteRepository.save(cliente);
+        enderecoRepository.saveAll(cliente.getEnderecos());
+        return cliente;
     }
 
     public Cliente update(Cliente cliente) {
@@ -54,6 +68,30 @@ public class ClienteService {
 
     public Cliente fromDTO(ClienteDTO cliente) {
         return new Cliente(cliente.getId(), cliente.getNome(), cliente.getEmail(), null, null);
+    }
+
+    public Cliente fromDTO(ClienteNewDTO clienteDTO) {
+        Cliente cliente = new Cliente(null, clienteDTO.getNome(), clienteDTO.getEmail(),
+                clienteDTO.getCpfOuCnpj(), TipoCliente.toEnum(clienteDTO.getTipoCliente()));
+
+        Cidade cidade = new Cidade(clienteDTO.getCidadeId(), null, null);
+
+        Endereco endereco = new Endereco(null, clienteDTO.getLogradouro(), clienteDTO.getNumero(),
+                clienteDTO.getComplemento(), clienteDTO.getBairro(), clienteDTO.getCep(), cliente, cidade);
+
+        cliente.getEnderecos().add(endereco);
+
+        cliente.getTelefones().add(clienteDTO.getTelefone1());
+
+        if (clienteDTO.getTelefone2() != null) {
+            cliente.getTelefones().add(clienteDTO.getTelefone2());
+        }
+
+        if (clienteDTO.getTelefone3() != null) {
+            cliente.getTelefones().add(clienteDTO.getTelefone3());
+        }
+
+        return cliente;
     }
 
     private void updateData(Cliente clienteNovo, Cliente cliente) {
