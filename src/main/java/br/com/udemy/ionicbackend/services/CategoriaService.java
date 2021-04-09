@@ -1,6 +1,7 @@
 package br.com.udemy.ionicbackend.services;
 
 import br.com.udemy.ionicbackend.domain.Categoria;
+import br.com.udemy.ionicbackend.dto.CategoriaDTO;
 import br.com.udemy.ionicbackend.repositories.CategoriaRepository;
 import br.com.udemy.ionicbackend.services.exceptions.DataIntegrityException;
 import br.com.udemy.ionicbackend.services.exceptions.ObjectNotFoundException;
@@ -52,5 +53,9 @@ public class CategoriaService {
     public Page<Categoria> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
         PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
         return categoriaRepository.findAll(pageRequest);
+    }
+
+    public Categoria fromDTO(CategoriaDTO categoria) {
+        return new Categoria(categoria.getId(), categoria.getNome());
     }
 }
