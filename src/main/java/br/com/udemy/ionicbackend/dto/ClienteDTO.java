@@ -1,12 +1,14 @@
 package br.com.udemy.ionicbackend.dto;
 
 import br.com.udemy.ionicbackend.domain.Cliente;
+import br.com.udemy.ionicbackend.services.validation.ClienteUpdate;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 
+@ClienteUpdate
 public class ClienteDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
