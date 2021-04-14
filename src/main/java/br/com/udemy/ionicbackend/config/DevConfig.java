@@ -1,6 +1,8 @@
 package br.com.udemy.ionicbackend.config;
 
 import br.com.udemy.ionicbackend.services.DBService;
+import br.com.udemy.ionicbackend.services.EmailService;
+import br.com.udemy.ionicbackend.services.SmtpEmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -22,8 +24,15 @@ public class DevConfig {
     @Bean
     public boolean instantiateDatabase() throws ParseException {
         if (!"create".equals(strategy)) {
-            dbService.instantiateDatabase();
+            return false;
         }
+
+        dbService.instantiateTestDatabase();
         return true;
+    }
+
+    @Bean
+    public EmailService emailService() {
+        return new SmtpEmailService();
     }
 }
