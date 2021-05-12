@@ -5,6 +5,7 @@ import br.com.udemy.ionicbackend.domain.enums.EstadoPagamento;
 import br.com.udemy.ionicbackend.domain.enums.TipoCliente;
 import br.com.udemy.ionicbackend.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -41,6 +42,9 @@ public class DBService {
 
     @Autowired
     ItemPedidoRepository itemPedidoRepository;
+
+    @Autowired
+    BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public void instantiateTestDatabase() throws ParseException {
 
@@ -100,7 +104,7 @@ public class DBService {
         estadoRepository.saveAll(Arrays.asList(est1, est2));
         cidadeRepository.saveAll(Arrays.asList(c1, c2, c3));
 
-        Cliente cli1 = new Cliente(null, "Roberto de Vargas Neto", "rvneto.dev@gmail.com", "35012796047", TipoCliente.PESSOA_FISICA);
+        Cliente cli1 = new Cliente(null, "Roberto de Vargas Neto", "rvneto.dev@gmail.com", "35012796047", TipoCliente.PESSOA_FISICA, bCryptPasswordEncoder.encode("123"));
         cli1.getTelefones().addAll(Arrays.asList("996347786", "997654421"));
 
         Endereco e1 = new Endereco(null, "Rua Flores", "300", "Apto 303", "Jardim", "38220834", cli1, c1);
